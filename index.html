@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Didier's Naming and Formula Writing Flowchart</title>
+
+<!-- Poppins font for readability (same as your preferred version) -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --navy:#001f3f;
+    --gold:#ffd700;
+    --card:#ffffff;
+    --bg:#f7f8fb;
+  }
+  html,body{height:100%;margin:0}
+  body{
+    margin:0;
+    font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Arial;
+    background:var(--bg);
+    color:var(--navy);
+    line-height:1.65;
+    font-size:18px; /* larger base font for readability */
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
+  header{
+    background:var(--navy);
+    color:var(--gold);
+    padding:24px 20px;
+    text-align:center;
+    box-shadow:0 2px 10px rgba(0,0,0,0.12);
+  }
+  header h1{ margin:0; font-size:26px; font-weight:600; letter-spacing:0.2px; }
+  header .sub{ font-size:15px; color:rgba(255,215,0,0.9); margin-top:8px }
+
+  .wrap{
+    max-width:980px;
+    margin:36px auto;
+    padding:0 20px;
+  }
+
+  .card{
+    background:var(--card);
+    border-radius:14px;
+    padding:28px;
+    box-shadow:0 10px 30px rgba(3,12,30,0.07);
+    margin-bottom:26px;
+    text-align:center;
+  }
+
+  h2{ margin:0 0 12px 0; font-size:24px; font-weight:600; color:var(--navy) }
+  p.muted{ color:#556078; margin:6px 0 14px 0; font-size:1.05rem }
+
+  button{
+    background:var(--gold);
+    color:var(--navy);
+    border:0;
+    padding:12px 18px;
+    border-radius:12px;
+    cursor:pointer;
+    font-weight:600;
+    font-size:1.05rem;
+    margin:10px 8px;
+    transition:transform .12s ease, box-shadow .12s;
+  }
+  button:hover{ transform:translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,0.08) }
+  button:disabled{opacity:0.6; cursor:not-allowed}
+
+  .flow-question{ font-size:1.25rem; font-weight:600; margin-bottom:16px; text-align:left }
+  .flow-buttons{ display:flex; gap:12px; flex-wrap:wrap; justify-content:flex-start; margin-bottom:14px }
+  .result-box{ text-align:left; display:inline-block; background:#f3f6fb; border-left:5px solid var(--gold); padding:16px; border-radius:10px; max-width:100%; font-size:1.05rem }
+
+  .quiz-banner{
+    background:var(--navy);
+    color:var(--gold);
+    padding:14px 16px;
+    border-radius:12px;
+    font-weight:600;
+    margin-bottom:18px;
+    text-align:left;
+    font-size:1.05rem;
+  }
+
+  .question-row{ text-align:left; margin-bottom:14px; padding-bottom:8px; border-bottom:1px solid #eef4fb; font-size:1.05rem }
+  .question-row b{ display:inline-block; min-width:38px }
+  input[type="text"]{
+    width:76%;
+    max-width:700px;
+    padding:12px 14px;
+    border-radius:10px;
+    border:1px solid #d7dbe6;
+    font-size:1.05rem;
+    margin-top:8px;
+  }
+
+  .score-row{ display:flex; justify-content:space-between; gap:18px; align-items:flex-start; margin-top:16px; flex-wrap:wrap; text-align:left }
+  .score-box{ font-weight:700; font-size:1.15rem }
+  .breakdown-box{ font-size:1.02rem }
+
+  .results-list{ margin-top:14px; text-align:left; font-size:1.05rem }
+  .res-item{ padding:8px 0; border-bottom:1px solid #eef4fb }
+  .correct{ color:green; font-weight:600 }
+  .incorrect{ color:red; font-weight:600 }
+
+  .nav-small{ margin-top:14px; text-align:left }
+  .back-small{ margin-right:8px }
+
+  /* responsive tweaks */
+  @media(max-width:760px){
+    body{ font-size:17px; }
+    input[type="text"]{ width:100% }
+    .flow-buttons{ justify-content:center }
+    .result-box{ width:100% }
+    .card{ padding:20px }
+    .quiz-banner{ font-size:1rem }
+  }
+</style>
+</head>
+<body>
+  <header>
+    <h1>Didier's Naming and Formula Writing Flowchart</h1>
+    <div class="sub">Mahtomedi High School Chemistry</div>
+  </header>
+
+  <main class="wrap">
+    <!-- HOME -->
+    <section id="homeCard" class="card">
+      <h2>Welcome</h2>
+      <p class="muted">Explore the interactive flowchart or practice with the full quiz.</p>
+      <div>
+        <button onclick="openFlow()">Naming &amp; Formula Writing Flowchart</button>
+        <button onclick="openQuiz()">Practice Quiz Mode</button>
+      </div>
+    </section>
+
+    <!-- FLOWCHART -->
+    <section id="flowCard" class="card" style="display:none; text-align:left;">
+      <div id="flowContentInner">
+        <div class="flow-question" id="flowQ">Are you converting a name to a formula or writing a formula for a name?</div>
+        <div class="flow-buttons" id="flowButtons"></div>
+        <div id="flowResult" class="result-box" style="display:none"></div>
+
+        <div class="nav-small" style="margin-top:12px">
+          <button class="back-small" id="flowBackBtn" onclick="flowGoBack()" style="display:none">⬅ Back</button>
+          <button onclick="goHome()">🏠 Home</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUIZ -->
+    <section id="quizCard" class="card" style="display:none; text-align:left;">
+      <div class="quiz-banner">
+        Write formulas using normal numbers (e.g., Na₃PO₄ can be typed as Na3PO4).<br>
+        <strong>Formulas are case sensitive. Names are NOT case sensitive.</strong>
+      </div>
+
+      <form id="quizForm"></form>
+
+      <div style="margin-top:12px; display:flex; gap:12px; align-items:flex-start; flex-wrap:wrap;">
+        <button onclick="gradeAll()">Submit Answers</button>
+        <button onclick="goHome()">🏠 Home</button>
+      </div>
+
+      <div id="results" class="results-list" style="display:none"></div>
+    </section>
+  </main>
+
+<script>
+/* -----------------------
+   FLOWCHART logic (one question at a time, back supported)
+   ----------------------- */
+const flowLogic = {
+  start: { q: "Are you converting a name to a formula or writing a formula for a name?", opts: [
+    {t:"Name → Formula", n:"nameToFormula_start"},
+    {t:"Formula → Name", n:"formulaToName_start"}
+  ]},
+  nameToFormula_start: { q: "Does the formula start with a metal (or NH₄⁺) or a nonmetal?", opts:[
+    {t:"Metal or NH₄⁺", n:"nameToFormula_ionicType"},
+    {t:"Nonmetal", n:"nameToFormula_covalent"}
+  ]},
+  nameToFormula_ionicType: { q: "Does the metal have a variable charge (transition metal, tin (Sn) or lead (Pb))?", opts:[
+    {t:"Yes", n:"nameToFormula_variableMetal"},
+    {t:"No", n:"nameToFormula_fixedMetal"}
+  ]},
+  nameToFormula_fixedMetal: { q: "Is the anion polyatomic or a single nonmetal?", opts:[
+    {t:"Polyatomic ion", n:"nameToFormula_fixedPoly"},
+    {t:"Single nonmetal", n:"nameToFormula_fixedBinary"}
+  ]},
+  nameToFormula_fixedPoly: { res: "Use the metal's symbol (and fixed charge) and the polyatomic ion (from the chart). Balance total charges to 0 (swap/drop/reduce).<br><strong>Example:</strong> Calcium nitrate → Ca²⁺ + NO₃⁻ → Ca(NO₃)₂" },
+  nameToFormula_fixedBinary: { res: "Use the metal's symbol (and fixed charge) and the nonmetal ion (identify anion and its charge). Balance total charges to 0 (swap/drop/reduce).<br><strong>Example:</strong> Sodium chloride → Na⁺ + Cl⁻ → NaCl" },
+  nameToFormula_variableMetal: { q: "Is the anion polyatomic or a single nonmetal?", opts:[
+    {t:"Polyatomic ion", n:"nameToFormula_variablePoly"},
+    {t:"Single nonmetal", n:"nameToFormula_variableBinary"}
+  ]},
+  nameToFormula_variablePoly: { res: "Use the Roman numeral to determine metal charge, pair with polyatomic ion (from the chart), and balance total charges to 0 (swap/drop/reduce).<br><strong>Example:</strong> Iron(III) nitrate → Fe³⁺ + NO₃⁻ → Fe(NO₃)₃" },
+  nameToFormula_variableBinary: { res: "Use the Roman numeral to determine metal charge, pair with nonmetal ion (find its fixed charge), and balance total charges to 0 (swap/drop/reduce).<br><strong>Example:</strong> Copper(I) oxide → Cu⁺ + O²⁻ → Cu₂O" },
+  nameToFormula_covalent: { res: "Use prefixes to determine subscripts. Assume one atom for the first element if no prefix is given. Write symbols in the order of the name.<br><strong>Examples:</strong> Dinitrogen pentoxide → N₂O₅, Phosphorus trichloride → PCl₃" },
+  
+  formulaToName_start: { q: "Does the formula start with a metal (or NH₄⁺) or a nonmetal?", opts:[
+    {t:"Metal or NH₄⁺", n:"formulaToName_ionicType"},
+    {t:"Nonmetal", n:"formulaToName_covalent"}
+  ]},
+  formulaToName_ionicType: { q: "Does the metal have a variable charge (transition metal, tin (Sn) or lead (Pb))?", opts:[
+    {t:"Yes", n:"formulaToName_variableMetal"},
+    {t:"No", n:"formulaToName_fixedMetal"}
+  ]},
+  formulaToName_fixedMetal: { q: "Is the anion polyatomic or a single nonmetal?", opts:[
+    {t:"Polyatomic ion", n:"formulaToName_fixedPoly"},
+    {t:"Single nonmetal", n:"formulaToName_fixedBinary"}
+  ]},
+  formulaToName_fixedPoly: { res: "Name the metal, then the polyatomic ion (from the chart).<br><strong>Example:</strong> NaNO₃ → sodium nitrate" },
+  formulaToName_fixedBinary: { res: "Name the metal, then the nonmetal ending in '-ide.'<br><strong>Example:</strong> CaCl₂ → calcium chloride" },
+  formulaToName_variableMetal: { q: "Is the anion polyatomic or a single nonmetal?", opts:[
+    {t:"Polyatomic ion", n:"formulaToName_variablePoly"},
+    {t:"Single nonmetal", n:"formulaToName_variableBinary"}
+  ]},
+  formulaToName_variablePoly: { res: "Name the metal (include Roman numeral for charge) and the polyatomic ion (from the chart).<br><strong>Example:</strong> Fe(NO₃)₃ → iron(III) nitrate" },
+  formulaToName_variableBinary: { res: "Name the metal (with Roman numeral for the charge) and the nonmetal ending '-ide.'<br><strong>Example:</strong> CuO → copper(II) oxide" },
+  formulaToName_covalent: { res: "Use prefixes to show number of atoms. Do not use 'mono-' on the first element.<br><strong>Examples:</strong> CO → carbon monoxide, N₂O₅ → dinitrogen pentoxide" }
+};
+
+let flowHistory = ['start'];
+
+function openFlow(){
+  document.getElementById('homeCard').style.display='none';
+  document.getElementById('quizCard').style.display='none';
+  document.getElementById('flowCard').style.display='block';
+  flowHistory = ['start'];
+  renderFlow();
+}
+
+function goHome(){
+  document.getElementById('homeCard').style.display='block';
+  document.getElementById('flowCard').style.display='none';
+  document.getElementById('quizCard').style.display='none';
+  document.getElementById('results').style.display='none';
+  document.getElementById('results').innerHTML='';
+}
+
+function flowGoBack(){
+  if(flowHistory.length>1){
+    flowHistory.pop();
+    renderFlow();
+  }
+}
+
+function renderFlow(){
+  const key = flowHistory[flowHistory.length-1];
+  const node = flowLogic[key];
+  const qEl = document.getElementById('flowQ');
+  const btns = document.getElementById('flowButtons');
+  const res = document.getElementById('flowResult');
+  const backBtn = document.getElementById('flowBackBtn');
+
+  qEl.textContent = node.q || '';
+  btns.innerHTML = '';
+  res.style.display = 'none';
+  res.innerHTML = '';
+  backBtn.style.display = flowHistory.length>1 ? 'inline-block' : 'none';
+
+  if(node.res){
+    qEl.textContent = 'Result';
+    res.innerHTML = node.res;
+    res.style.display = 'block';
+  } else if(node.opts){
+    node.opts.forEach(o=>{
+      const b = document.createElement('button');
+      b.textContent = o.t;
+      b.onclick = ()=>{
+        flowHistory.push(o.n);
+        renderFlow();
+      };
+      btns.appendChild(b);
+    });
+  }
+}
+
+/* -----------------------
+   PRACTICE QUIZ (all questions visible)
+   ----------------------- */
+
+/* Quiz data: prompts use readable Unicode subscripts; answers are canonical ASCII */
+const quizData = [
+  { prompt:"Name this compound: SnI₂", answer:"tin(II) iodide", cat:"variable_ionic_name" },
+  { prompt:"Name this compound: MgS", answer:"magnesium sulfide", cat:"fixed_ionic_name" },
+  { prompt:"Name this compound: CaO", answer:"calcium oxide", cat:"fixed_ionic_name" },
+  { prompt:"Name this compound: Cu₂S", answer:"copper(I) sulfide", cat:"variable_ionic_name" },
+  { prompt:"Name this compound: CBr", answer:"carbon monobromide", cat:"binary_covalent_name" },
+  { prompt:"Name this compound: FeCl₂", answer:"iron(II) chloride", cat:"variable_ionic_name" },
+  { prompt:"Name this compound: N₂O", answer:"dinitrogen monoxide", cat:"binary_covalent_name" },
+  { prompt:"Name this compound: Ag₂SO₄", answer:"silver sulfate", cat:"fixed_ionic_name" },
+  { prompt:"Name this compound: Mg₃N₂", answer:"magnesium nitride", cat:"fixed_ionic_name" },
+  { prompt:"Name this compound: CO₂", answer:"carbon dioxide", cat:"binary_covalent_name" },
+  { prompt:"Name this compound: Ni₂O₃", answer:"nickel(III) oxide", cat:"variable_ionic_name" },
+  { prompt:"Name this compound: Zn(NO₃)₂", answer:"zinc nitrate", cat:"fixed_ionic_name" },
+  { prompt:"Name this compound: NI₃", answer:"nitrogen triiodide", cat:"binary_covalent_name" },
+  { prompt:"Write the formula for: barium sulfide", answer:"BaS", cat:"fixed_ionic_formula" },
+  { prompt:"Write the formula for: sodium hydroxide", answer:"NaOH", cat:"fixed_ionic_formula" },
+  { prompt:"Write the formula for: lead (II) nitrate", answer:"Pb(NO3)2", cat:"variable_ionic_formula" },
+  { prompt:"Write the formula for: potassium permanganate", answer:"KMnO4", cat:"fixed_ionic_formula" },
+  { prompt:"Write the formula for: iron (II) sulfate", answer:"FeSO4", cat:"variable_ionic_formula" },
+  { prompt:"Write the formula for: diphosphorus trioxide", answer:"P2O3", cat:"binary_covalent_formula" },
+  { prompt:"Write the formula for: disulfur dichloride", answer:"S2Cl2", cat:"binary_covalent_formula" },
+  { prompt:"Write the formula for: carbon diselenide", answer:"CSe2", cat:"binary_covalent_formula" },
+  { prompt:"Write the formula for: iron(II) chloride", answer:"FeCl2", cat:"variable_ionic_formula" },
+  { prompt:"Write the formula for: phosphorus pentabromide", answer:"PBr5", cat:"binary_covalent_formula" },
+  { prompt:"Write the formula for: copper(II) acetate", answer:"Cu(C2H3O2)2", cat:"variable_ionic_formula" },
+  { prompt:"Write the formula for: calcium chlorate", answer:"Ca(ClO3)2", cat:"fixed_ionic_formula" },
+  { prompt:"Write the formula for: dinitrogen tetroxide", answer:"N2O4", cat:"binary_covalent_formula" },
+  { prompt:"Write the formula for: aluminum hydroxide", answer:"Al(OH)3", cat:"fixed_ionic_formula" },
+  { prompt:"Write the formula for: sodium phosphate", answer:"Na3PO4", cat:"fixed_ionic_formula" }
+];
+
+function openQuiz(){
+  document.getElementById('homeCard').style.display='none';
+  document.getElementById('flowCard').style.display='none';
+  document.getElementById('quizCard').style.display='block';
+  renderQuizForm();
+}
+
+function renderQuizForm(){
+  const form = document.getElementById('quizForm');
+  // randomize order each time
+  const shuffled = quizData.map(q=>q).sort(()=>Math.random()-0.5);
+  // store canonical answers/order to grade later
+  form.dataset.order = JSON.stringify(shuffled.map(q=>({ans:q.answer,cat:q.cat})));
+  let html = '';
+  shuffled.forEach((q,i)=>{
+    html += `
+      <div class="question-row">
+        <div><b>${i+1}.</b> ${q.prompt}</div>
+        <div><input type="text" id="resp${i}" placeholder="Type answer here"></div>
+      </div>`;
+  });
+  form.innerHTML = html;
+  // clear old results
+  document.getElementById('results').style.display='none';
+  document.getElementById('results').innerHTML='';
+}
+
+/* helpers: normalize inputs for fair comparison
+   - names: case-insensitive, ignore spaces
+   - formulas: accept unicode subscripts typed by user, ignore spaces; otherwise case-sensitive
+*/
+const subMap = {'₀':'0','₁':'1','₂':'2','₃':'3','₄':'4','₅':'5','₆':'6','₇':'7','₈':'8','₉':'9'};
+function convertSubscriptsToDigits(s){
+  if(!s) return '';
+  let out='';
+  for(const ch of s) out += subMap[ch] ?? ch;
+  return out;
+}
+function normalizeNameInput(s){ return (s||'').toLowerCase().replace(/\s+/g,'').trim(); }
+function normalizeFormulaInput(s){ return convertSubscriptsToDigits((s||'').replace(/\s+/g,'')).trim(); }
+
+function gradeAll(){
+  const form = document.getElementById('quizForm');
+  const order = JSON.parse(form.dataset.order || '[]'); // [{ans,cat},...]
+  const userInputs = [];
+  for(let i=0;i<order.length;i++){
+    const el = document.getElementById('resp'+i);
+    userInputs.push(el ? el.value.trim() : '');
+  }
+
+  const total = order.length;
+  let correct = 0;
+  const catTotals = {}, catCorrect = {};
+  const perQ = [];
+
+  for(let i=0;i<order.length;i++){
+    const {ans, cat} = order[i];
+    const user = userInputs[i] || '';
+    if(!catTotals[cat]) catTotals[cat]=0;
+    if(!catCorrect[cat]) catCorrect[cat]=0;
+    catTotals[cat]++;
+
+    let isName = cat.includes('name');
+    let isCorrect = false;
+    if(isName){
+      isCorrect = normalizeNameInput(user) === normalizeNameInput(ans);
+    } else {
+      const userNorm = normalizeFormulaInput(user);
+      const ansNorm = normalizeFormulaInput(ans);
+      isCorrect = userNorm === ansNorm;
+    }
+    if(isCorrect){ correct++; catCorrect[cat]++; }
+    perQ.push({ idx:i+1, user: user||'(blank)', ans, isCorrect, cat });
+  }
+
+  // category breakdown sorted best→worst by percent
+  const cats = Object.keys(catTotals).map(c=>{
+    const got = catCorrect[c]||0; const tot = catTotals[c];
+    const pct = tot>0 ? Math.round((got/tot)*100) : 0;
+    return { c, got, tot, pct };
+  }).sort((a,b)=>b.pct - a.pct);
+
+  // render results
+  const resultsDiv = document.getElementById('results');
+  resultsDiv.innerHTML = '';
+
+  // score + breakdown side-by-side
+  const scoreRow = document.createElement('div');
+  scoreRow.className = 'score-row';
+  const left = document.createElement('div'); left.className = 'score-box';
+  left.innerHTML = `Score: ${correct}/${total} (${Math.round((correct/total)*100)}%)`;
+  const right = document.createElement('div'); right.className = 'breakdown-box';
+  right.innerHTML = `<strong>Category breakdown</strong><br>` + cats.map(x=>`${x.c.replaceAll('_',' ')}: ${x.got}/${x.tot} (${x.pct}%)`).join('<br>');
+  scoreRow.appendChild(left); scoreRow.appendChild(right);
+  resultsDiv.appendChild(scoreRow);
+
+  // per-question compact results (no extra blank lines)
+  const list = document.createElement('div'); list.style.marginTop='12px';
+  perQ.forEach(r=>{
+    const item = document.createElement('div'); item.className='res-item';
+    if(r.isCorrect){
+      item.innerHTML = `<span class="correct">✅</span> <strong>Q${r.idx}:</strong> ${escapeHtml(r.user)}`;
+    } else {
+      item.innerHTML = `<span class="incorrect">❌</span> <strong>Q${r.idx}:</strong> ${escapeHtml(r.user)} &nbsp; <em>Correct:</em> ${escapeHtml(r.ans)}`;
+    }
+    list.appendChild(item);
+  });
+  resultsDiv.appendChild(list);
+  resultsDiv.style.display='block';
+  resultsDiv.scrollIntoView({behavior:'smooth'});
+}
+
+function escapeHtml(s){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+
+/* navigation helpers */
+function goHome(){ 
+  document.getElementById('homeCard').style.display='block';
+  document.getElementById('flowCard').style.display='none';
+  document.getElementById('quizCard').style.display='none';
+  document.getElementById('results').style.display='none';
+  document.getElementById('results').innerHTML='';
+}
+</script>
+</body>
+</html>
